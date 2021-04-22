@@ -16,8 +16,8 @@ import mysklearn.mypytable
 importlib.reload(mysklearn.mypytable)
 from mysklearn.mypytable import MyPyTable 
 
-client_id = '39972189754b4760b688b27d2baf4587'
-client_secret = '9a6729049b0d4f328f485ee377896827'
+client_id = ''
+client_secret = ''
 
 AUTH_URL = 'https://accounts.spotify.com/api/token'
 
