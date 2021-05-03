@@ -170,13 +170,23 @@ class MyPyTable:
         Notes:
             Use the csv module.
         """
-        open(filename, "w").close()
-        with open(filename, "w") as f:
-            csv_writer = csv.writer(f)
-            csv_writer.writerow(self.column_names)
-        with open(filename, "a+", newline="") as f:
-            csv_writer = csv.writer(f)
-            csv_writer.writerows(self.data)
+        # open(filename, "w").close()
+        with open(filename, 'w') as csvfile: 
+            # creating a csv writer object 
+            csvwriter = csv.writer(csvfile)
+
+            # writing the fields 
+            csvwriter.writerow(self.column_names) 
+                
+            # writing the data rows 
+            csvwriter.writerows(self.data)
+
+        # with open(filename, "w") as f:
+        #     csv_writer = csv.writer(f)
+        #     csv_writer.writerow(self.column_names)
+        # with open(filename, "a+", newline="") as f:
+        #     csv_writer = csv.writer(f)
+        #     csv_writer.writerows(self.data)
 
     def find_duplicates(self, key_column_names):
         """Returns a list of duplicates. Rows are identified uniquely baed on key_column_names.

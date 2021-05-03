@@ -4,6 +4,7 @@ Class: 322-01, Spring 2021
 Final Project
 4/21/21
 """
+import os
 import urllib.request 
 import json
 import pandas as pd
@@ -43,7 +44,7 @@ characters = 'abcdefghijklmnopqrstuvwxyz'
 
 for i in range(track_quantity):
     random_search_key, offset = myutils.getRandomSearch(characters)
-    print(random_search_key, offset)
+    # print(random_search_key, offset)
     search_json_response = requests.get(BASE_URL + "search{}{}{}{}".format("?q="+str(random_search_key), "&offset="+str(offset), "&limit=1", "&type=track"), headers=headers)
     search_json_object = search_json_response.json()
 
@@ -60,11 +61,14 @@ for i in range(track_quantity):
     artist_obj = requests.get(BASE_URL + "artists/{}/".format(artist_id), headers=headers)
     artist_obj = artist_obj.json()
     artist_popularity = artist_obj["popularity"]
+    genres = artist_obj["genres"]
 
     # Information about the album
-    album_obj = requests.get(BASE_URL + "albums/{}/".format(album_id), headers=headers)
-    album_obj = album_obj.json()
-    album_genres = album_obj["genres"]
+    # album_obj = requests.get(BASE_URL + "albums/{}/".format(album_id), headers=headers)
+    # album_obj = album_obj.json()
+    # # print(album_obj)
+    # # print("")
+    # album_genres = album_obj["genres"]
 
     # Information about the audio features
     audio_features = requests.get(BASE_URL + 'audio-features/' + track_id, headers=headers)
@@ -73,14 +77,15 @@ for i in range(track_quantity):
     acousticness = audio_features_json["acousticness"]
     tempo = audio_features_json["tempo"]
 
-    track_table.append([track_id, track_name, track_popularity, track_duration, artist_name, artist_popularity, album_genres, danceability, acousticness, tempo])
+    track_table.append([track_id, track_name, track_popularity, track_duration, artist_name, artist_popularity, genres, danceability, acousticness, tempo])
 
 
-column_names = ["track_id", "track_name", "track_popularity", "track_duration", "artist_name", "artist_popularity", "album_genres", "danceability", "acousticness", "tempo"]
+column_names = ["track_id", "track_name", "track_popularity", "track_duration", "artist_name", "artist_popularity", "genres", "danceability", "acousticness", "tempo"]
 track_pytable = MyPyTable(column_names, track_table)
-print(track_pytable.data)
+music_fname = os.path.join("input_data", "music-data.csv")
+track_pytable.save_to_file(music_fname)
+# print(track_pytable.data)
 
-# TODO: create mypytable with track_table
 
     
 
