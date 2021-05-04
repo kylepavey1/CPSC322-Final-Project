@@ -473,3 +473,57 @@ class MyDecisionTreeClassifier:
                     next_branch_list[attr_position] = branch - 1
             current_list = current_list[(next_branch_list[attr_position]+2)][2]   
         pass
+
+class MyRandomForestClassifier:
+    """Represents a simple linear regressor.
+
+    Attributes:
+        slope(float): m in the equation y = mx + b
+        intercept(float): b in the equation y = mx + b
+
+    Notes:
+        Loosely based on sklearn's LinearRegression: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+        Terminology: instance = sample = row and attribute = feature = column
+    """
+    
+    def __init__(self):
+        """Initializer for MyRandomForestClassifier.
+
+        Args:
+            
+        """
+        self.n = None
+        self.m = None
+        self.f = None
+        self.X_train = None 
+        self.y_train = None
+
+    def fit(self, X_train, y_train):
+        """
+
+        Args:
+            X_train(list of list of numeric vals): The list of training samples
+                The shape of X_train is (n_train_samples, n_features)
+                Note that n_features for simple regression is 1, so each sample is a list 
+                    with one element e.g. [[0], [1], [2]]
+            y_train(list of numeric vals): The target y values (parallel to X_train) 
+                The shape of y_train is n_train_samples
+        """
+        
+
+    def predict(self, X_test):
+        """Makes predictions for test samples in X_test.
+
+        Args:
+            X_test(list of list of numeric vals): The list of testing samples
+                The shape of X_test is (n_test_samples, n_features)
+                Note that n_features for simple regression is 1, so each sample is a list 
+                    with one element e.g. [[0], [1], [2]]
+
+        Returns:
+            y_predicted(list of numeric vals): The predicted target y values (parallel to X_test)
+        """
+        y_predicted = []
+        for val in X_test:
+            y_predicted.append((self.slope * val) + self.intercept)
+        return y_predicted # TODO: fix this
