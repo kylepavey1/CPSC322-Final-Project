@@ -503,3 +503,18 @@ def compute_error_rate(matrix):
         return 0
     else:
         return fp_fn / p_n
+
+def bootstrap(table):
+    n = len(table)
+    sample = []
+    for _ in range(n):
+        rand_index = random.randrange(0, n)
+        sample.append(table[rand_index])
+    return sample
+
+def random_attribute_subset(attributes, F):
+    # shuffle and pick first F
+    shuffled = attributes[:] # make a copy
+    random.shuffle(shuffled)
+    return shuffled[:F]
+

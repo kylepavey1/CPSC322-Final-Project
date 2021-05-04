@@ -6,6 +6,10 @@ Final Project
 """
 
 
+import importlib
+
+import mysklearn.myutils
+importlib.reload(mysklearn.myutils)
 import mysklearn.myutils as myutils
 import copy
 import csv 
@@ -171,12 +175,12 @@ class MyPyTable:
             Use the csv module.
         """
         # open(filename, "w").close()
-        with open(filename, 'w') as csvfile: 
+        with open(filename, 'a+', newline='') as csvfile: 
             # creating a csv writer object 
             csvwriter = csv.writer(csvfile)
 
             # writing the fields 
-            csvwriter.writerow(self.column_names) 
+            # csvwriter.writerow(self.column_names) 
                 
             # writing the data rows 
             csvwriter.writerows(self.data)

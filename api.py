@@ -38,7 +38,7 @@ headers = {
 
 BASE_URL = 'https://api.spotify.com/v1/'
 
-track_quantity = 5
+track_quantity = 1
 track_table = []
 characters = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -56,12 +56,16 @@ for i in range(track_quantity):
     artist_name = search_json_object["tracks"]["items"][0]["artists"][0]["name"]
     track_popularity = search_json_object["tracks"]["items"][0]["popularity"]
     track_duration = search_json_object["tracks"]["items"][0]["duration_ms"]
+    available_markets = len(search_json_object["tracks"]["items"][0]["available_markets"])
 
     # Information about the artist
     artist_obj = requests.get(BASE_URL + "artists/{}/".format(artist_id), headers=headers)
     artist_obj = artist_obj.json()
     artist_popularity = artist_obj["popularity"]
     genres = artist_obj["genres"]
+    if isinstance(genres, list):
+        if genres:
+            genres = genres[0]
 
     # Information about the album
     # album_obj = requests.get(BASE_URL + "albums/{}/".format(album_id), headers=headers)
@@ -77,14 +81,13 @@ for i in range(track_quantity):
     acousticness = audio_features_json["acousticness"]
     tempo = audio_features_json["tempo"]
 
-    track_table.append([track_id, track_name, track_popularity, track_duration, artist_name, artist_popularity, genres, danceability, acousticness, tempo])
+    track_table.append([track_id, track_name, track_popularity, track_duration, artist_name, artist_popularity, genres, available_markets, danceability, acousticness, tempo])
 
 
-column_names = ["track_id", "track_name", "track_popularity", "track_duration", "artist_name", "artist_popularity", "genres", "danceability", "acousticness", "tempo"]
+column_names = ["track_id", "track_name", "track_popularity", "track_duration", "artist_name", "artist_popularity", "genres", "available_markets", "danceability", "acousticness", "tempo"]
 track_pytable = MyPyTable(column_names, track_table)
-music_fname = os.path.join("input_data", "music-data.csv")
+music_fname = os.path.join("CPSC322-Final-Project/input_data", "music-data.csv")
 track_pytable.save_to_file(music_fname)
-# print(track_pytable.data)
 
 
     
