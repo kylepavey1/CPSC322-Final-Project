@@ -25,16 +25,52 @@ def predict():
 
     # get a prediction for this unseen instance via the tree
     # return the prediction as a JSON response
-
-    # prediction = predict_interviews_well([level, lang, tweets, phd])
+    prediction = predict_interviews_well([track_duration, artist_popularity, genre, available_markets, danceability, acousticness, tempo])
     # if anything goes wrong, predict_interviews_well() is going to return None
-    # if prediction is not None:
-    #     result = {"prediction": prediction}
-    #     return jsonify(result), 200
-    # else: 
-    #     # failure!!
-    #     return "Error making prediction", 400
+    if prediction is not None:
+        result = {"prediction": prediction}
+        return jsonify(result), 200
+    else: 
+        # failure!!
+        return "Error making prediction", 400
+
+
+def tdidt_predict(header, tree, instance):
+    info_type = tree[0]
+    if info_type == "Attribute":
+        attribute_index = header.index(tree[1])
+        instance_value = instance[attribute_index]
+        # now I need to find which "edge" to follow recursively
+        for i in range(2, len(tree)):
+            value_list = tree[i]
+            if value_list[1] == instance_value:
+                # we have a match!! recurse!!
+                return tdidt_predict(header, value_list[2], instance)
+    else: # "Leaf"
+        return tree[1] # leaf class label
+
+def predict_interviews_well(instance):
+    # 1. we need to a tree (and its header)
+    # we need to save a trained model (fit()) to a file
+    # so we can load that file into memory in another python
+    # process as a python object (predict())
+    # import pickle and "load" the header and interview tree 
+    # as Python objects we can use for step 2
+    infile = open("tree.p", "rb")
+    header, tree = pickle.load(infile)
+    infile.close()
+    print("header:", header)
+    print("tree:", tree)
+
+    # 2. use the tree to make a prediction
+    try: 
+        return tdidt_predict(header, tree, instance) # recursive function
+    except:
+        return None
+
+
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=False)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port, debug=False)
