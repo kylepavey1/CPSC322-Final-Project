@@ -16,6 +16,9 @@ import importlib
 import mysklearn.myutils
 importlib.reload(mysklearn.myutils)
 import mysklearn.myutils as myutils
+import mysklearn.myevaluation
+importlib.reload(mysklearn.myevaluation)
+import mysklearn.myevaluation as myevaluation
 
 class MySimpleLinearRegressor:
     """Represents a simple linear regressor.
@@ -261,7 +264,7 @@ class MyNaiveBayesClassifier:
         for i, group in enumerate(grouped):
             posterior_group = []
             for attr in range(len(group[0]) - 1):
-                values, counts = myutils.get_frequencies(group, attr)
+                values, counts = myutils.get_frequencies_index(group, attr)
                 result_sum = sum(counts)
                 testing = []
                 for y, attr_val in enumerate(values):
@@ -364,6 +367,14 @@ class MyDecisionTreeClassifier:
         Loosely based on sklearn's DecisionTreeClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
         Terminology: instance = sample = row and attribute = feature = column
     """
+    # 1. all_same_class()
+    # 2. append subtree to values_subtree and to tree appropriately
+    # 3. work on CASE 1, then CASE 2, then CASE 3 (write helper functions!!)
+    # e.g. compute_partition_stats()
+    # 4. finish the TODOs in fit_starter_code()
+    # 5. replace random w/entropy (compare tree w/interview_tree)
+    # 6. move over starter code to PA6 OOP w/unit test fit()
+    # 7. move on to predict()...
     def __init__(self):
         """Initializer for MyDecisionTreeClassifier.
 
@@ -388,11 +399,34 @@ class MyDecisionTreeClassifier:
             Store the tree in the tree attribute.
             Use attribute indexes to construct default attribute names (e.g. "att0", "att1", ...).
         """
+        self.X_train = X_train
+        self.y_train = y_train
+        # calculate a header (e.g. ["att0", "att1", ...])
+        header = []
+        for i in range(len(X_train[0])):
+            att = 'att' + str(i)
+            header.append(att)
+        #print("header:", header)
+
+        # calculate the attribute domains dictionary
+        attributeDomain = {}
+        for attribute in header:
+            attributeDomain[attribute] = []
+            attributeIndex = header.index(attribute)
+            for row in X_train:
+                if row[attributeIndex] not in attributeDomain[attribute]:
+                    attributeDomain[attribute].append(row[attributeIndex])
+        #print("attributeDomain: ", attributeDomain)
+
+        # stitch together X_train and y_train
         train = [X_train[i] + [y_train[i]] for i in range(len(X_train))]
-        available_attributes = ["attr" + str(i) for i in range(len(train[0]) - 1)]
-        attribute_domains = myutils.get_attribute_domains(train)
-        tree = myutils.tdidt(train, available_attributes, attribute_domains) 
-        self.tree = tree 
+        available_attributes = header.copy() # recall: Python is pass by object reference
+
+        # initial tdidt() call
+        self.tree = myutils.tdidt(train, available_attributes, header, attributeDomain)
+        
+        #print("tree:", self.tree)
+        
         
     def predict(self, X_test):
         """Makes predictions for test instances in X_test.
@@ -404,28 +438,24 @@ class MyDecisionTreeClassifier:
         Returns:
             y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
-        isClass = False
-        class_label = None
-        y_predicted = []
-        current_list = self.tree.copy()
-        for x_val in X_test:
-            while not isClass:
-                attr_position = int(current_list[1].split("attr", 1)[1])
-                value = x_val[attr_position]
-                next_size = len(current_list) - 2
-                for x in range(2, 2 + next_size):
-                    if current_list[x][1] == value:
-                        current_list = current_list[x][2]
-                        break
-                if (current_list[0] == "Leaf"):
-                    class_label = current_list[1]
-                    isClass = True
-            y_predicted.append(class_label)
-            isClass = False
-            class_label = None
-            current_list = self.tree.copy()
-        return y_predicted
+        #["Junior", "Java", "yes", "no"],
+        predictions = []
+        
+        # calculate a header (e.g. ["att0", "att1", ...])
+        header = []
+        for i in range(len(self.X_train[0])):
+            att = 'att' + str(i)
+            header.append(att)
+        #print("header:", header)
 
+        # test for all instances in X_test
+        for test in X_test:
+            try:
+                predictions.append(myutils.tdidt_predict(header, self.tree, test))
+            except:
+                return None
+        
+        return predictions
 
     def print_decision_rules(self, attribute_names=None, class_name="class"):
         """Prints the decision rules from the tree in the format "IF att == val AND ... THEN class = label", one rule on each line.
@@ -436,94 +466,259 @@ class MyDecisionTreeClassifier:
             class_name(str): A string to use for the class name in the decision rules
                 ("class" if a string is not provided and the default name "class" should be used).
         """
-        print("\n\n===========================================")
-        print("Decision Rules")
-        print("===========================================")
-        all_rules = []
-        counted_leaves = []
-        leaf_Found = False
-        next_branch_list = {}
+
+        # calculate a header (e.g. ["att0", "att1", ...])   
+        header = []
+        for i in range(len(self.X_train[0])):
+            att = 'att' + str(i)
+            header.append(att)
+
+
         
-        rule = ""
-        current_list = self.tree.copy()
-        for _ in range(len(self.tree)):
-            branch = len(current_list) - 2
-            attr_position = current_list[1]
-            if attr_position in next_branch_list:
-                value = next_branch_list[attr_position]
-            else:
-                value = current_list[branch + 1][1]
-            if current_list[0] == "Leaf":
-                rule += " THEN {} == {}".format(class_name, current_list[1])
-                all_rules.append(rule)
-                print(all_rules)
-                rule = ""
-                current_list = self.tree.copy()
-                continue
-            else: 
-                if rule == "":
-                    rule = "IF {} == {}".format(attr_position, value)   
-                else: 
-                    rule += " AND IF {} == {}".format(attr_position, value)   
+
+        pass # TODO: fix this
+
+
+
+
+
+# class MyDecisionTreeClassifier:
+#     """Represents a decision tree classifier.
+
+#     Attributes:
+#         X_train(list of list of obj): The list of training instances (samples). 
+#                 The shape of X_train is (n_train_samples, n_features)
+#         y_train(list of obj): The target y values (parallel to X_train). 
+#             The shape of y_train is n_samples
+#         tree(nested list): The extracted tree model.
+
+#     Notes:
+#         Loosely based on sklearn's DecisionTreeClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+#         Terminology: instance = sample = row and attribute = feature = column
+#     """
+#     def __init__(self):
+#         """Initializer for MyDecisionTreeClassifier.
+
+#         """
+#         self.X_train = None 
+#         self.y_train = None
+#         self.tree = None
+
+#     def fit(self, X_train, y_train):
+#         """Fits a decision tree classifier to X_train and y_train using the TDIDT (top down induction of decision tree) algorithm.
+
+#         Args:
+#             X_train(list of list of obj): The list of training instances (samples). 
+#                 The shape of X_train is (n_train_samples, n_features)
+#             y_train(list of obj): The target y values (parallel to X_train)
+#                 The shape of y_train is n_train_samples
+
+#         Notes:
+#             Since TDIDT is an eager learning algorithm, this method builds a decision tree model
+#                 from the training data.
+#             Build a decision tree using the nested list representation described in class.
+#             Store the tree in the tree attribute.
+#             Use attribute indexes to construct default attribute names (e.g. "att0", "att1", ...).
+#         """
+#         train = [X_train[i] + [y_train[i]] for i in range(len(X_train))]
+#         available_attributes = ["attr" + str(i) for i in range(len(train[0]) - 1)]
+#         attribute_domains = myutils.get_attribute_domains(train)
+#         tree = myutils.tdidt(train, available_attributes, attribute_domains) 
+#         self.tree = tree 
+        
+#     def predict(self, X_test):
+#         """Makes predictions for test instances in X_test.
+
+#         Args:
+#             X_test(list of list of obj): The list of testing samples
+#                 The shape of X_test is (n_test_samples, n_features)
+
+#         Returns:
+#             y_predicted(list of obj): The predicted target y values (parallel to X_test)
+#         """
+#         isClass = False
+#         class_label = None
+#         y_predicted = []
+#         current_list = self.tree.copy()
+#         for x_val in X_test:
+#             while not isClass:
+#                 attr_position = int(current_list[1].split("attr", 1)[1])
+#                 value = x_val[attr_position]
+#                 next_size = len(current_list) - 2
+#                 for x in range(2, 2 + next_size):
+#                     if current_list[x][1] == value:
+#                         current_list = current_list[x][2]
+#                         break
+#                 if (current_list[0] == "Leaf"):
+#                     class_label = current_list[1]
+#                     isClass = True
+#             y_predicted.append(class_label)
+#             isClass = False
+#             class_label = None
+#             current_list = self.tree.copy()
+#         return y_predicted
+
+
+#     def print_decision_rules(self, attribute_names=None, class_name="class"):
+#         """Prints the decision rules from the tree in the format "IF att == val AND ... THEN class = label", one rule on each line.
+
+#         Args:
+#             attribute_names(list of str or None): A list of attribute names to use in the decision rules
+#                 (None if a list is not provided and the default attribute names based on indexes (e.g. "att0", "att1", ...) should be used).
+#             class_name(str): A string to use for the class name in the decision rules
+#                 ("class" if a string is not provided and the default name "class" should be used).
+#         """
+#         print("\n\n===========================================")
+#         print("Decision Rules")
+#         print("===========================================")
+#         all_rules = []
+#         counted_leaves = []
+#         leaf_Found = False
+#         next_branch_list = {}
+        
+#         rule = ""
+#         current_list = self.tree.copy()
+#         for _ in range(len(self.tree)):
+#             branch = len(current_list) - 2
+#             attr_position = current_list[1]
+#             if attr_position in next_branch_list:
+#                 value = next_branch_list[attr_position]
+#             else:
+#                 value = current_list[branch + 1][1]
+#             if current_list[0] == "Leaf":
+#                 rule += " THEN {} == {}".format(class_name, current_list[1])
+#                 all_rules.append(rule)
+#                 print(all_rules)
+#                 rule = ""
+#                 current_list = self.tree.copy()
+#                 continue
+#             else: 
+#                 if rule == "":
+#                     rule = "IF {} == {}".format(attr_position, value)   
+#                 else: 
+#                     rule += " AND IF {} == {}".format(attr_position, value)   
             
-            if attr_position.__contains__("attr"):
-                if attr_position in next_branch_list:
-                    next_branch_list[attr_position] = next_branch_list[attr_position] - 1
-                else: 
-                    next_branch_list[attr_position] = branch - 1
-            current_list = current_list[(next_branch_list[attr_position]+2)][2]   
-        pass
+#             if attr_position.__contains__("attr"):
+#                 if attr_position in next_branch_list:
+#                     next_branch_list[attr_position] = next_branch_list[attr_position] - 1
+#                 else: 
+#                     next_branch_list[attr_position] = branch - 1
+#             current_list = current_list[(next_branch_list[attr_position]+2)][2]   
+#         pass
 
 class MyRandomForestClassifier:
-    """Represents a simple linear regressor.
+    """Represents a random forest classifier.
 
     Attributes:
-        slope(float): m in the equation y = mx + b
-        intercept(float): b in the equation y = mx + b
+        X_train(list of list of obj): The list of training instances (samples). 
+                The shape of X_train is (n_train_samples, n_features)
+        y_train(list of obj): The target y values (parallel to X_train). 
+            The shape of y_train is n_samples
+        tree(nested list): The extracted tree model.
 
     Notes:
-        Loosely based on sklearn's LinearRegression: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+        Loosely based on sklearn's DecisionTreeClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
         Terminology: instance = sample = row and attribute = feature = column
     """
-    
     def __init__(self):
-        """Initializer for MyRandomForestClassifier.
+        """Initializer for MyDecisionTreeClassifier.
 
-        Args:
-            
         """
-        self.n = None
-        self.m = None
-        self.f = None
-        self.X_train = None 
-        self.y_train = None
-
+        self.best_M_trees = []
+        self.accuracy = None
     def fit(self, X_train, y_train):
-        """
+        """Fits a decision tree classifier to X_train and y_train using the TDIDT (top down induction of decision tree) algorithm.
 
         Args:
-            X_train(list of list of numeric vals): The list of training samples
+            X_train(list of list of obj): The list of training instances (samples). 
                 The shape of X_train is (n_train_samples, n_features)
-                Note that n_features for simple regression is 1, so each sample is a list 
-                    with one element e.g. [[0], [1], [2]]
-            y_train(list of numeric vals): The target y values (parallel to X_train) 
+            y_train(list of obj): The target y values (parallel to X_train)
                 The shape of y_train is n_train_samples
-        """
-        
 
+        Notes:
+            Since TDIDT is an eager learning algorithm, this method builds a decision tree model
+                from the training data.
+            Build a decision tree using the nested list representation described in class.
+            Store the tree in the tree attribute.
+            Use attribute indexes to construct default attribute names (e.g. "att0", "att1", ...).
+        """
+        # Divide instances into a test and remainder set
+
+        # take 1/3 for test set, 2/3 for remainder set
+        remainder_set, test_set, remainder_y, test_y = myevaluation.train_test_split(X_train, y_train)
+    
+        # Create N bootstrap samples from remainder set
+        N = 4 #number of trees
+        forest = []
+        for i in range(N):
+            training_set, training_y = myutils.compute_bootstrapped_sample(remainder_set, remainder_y)
+            print(training_set[0], training_y[0], remainder_set[0])
+            # print("trainingset: ", training_set)
+            #fill out validation set
+            validation_set = []
+            validation_y = []
+            
+            for instance in remainder_set:
+                if instance not in training_set:
+                    validation_set.append(instance)
+            for y in remainder_y:
+                if y not in training_y:
+                    validation_y.append(y)
+            
+            # print("validationset: ", validation_set)
+
+            tree = MyDecisionTreeClassifier()
+            #print("tree: ", tree)
+            tree.fit(training_set, training_y)
+
+            forest.append(tree)
+        
+        
+        labels = ["att1", "att2"]
+        #run validation set through each tree to get accuracy
+        tree_accuracy = []
+        for tree in forest:
+            y_pred = tree.predict(validation_set)
+            print(len(validation_y), len(y_pred))
+            matrix = myevaluation.confusion_matrix(validation_y, y_pred, labels)
+            accuracy = myutils.compute_accuracy(matrix)
+            tree_accuracy.append(accuracy)
+        
+        #choose best M trees 
+        M = 3
+
+        tree_accuracy.sort()
+        for i in range(M):
+            # print("index: ", -i-1)
+            self.best_M_trees.append(forest[-i-1])
+
+        # Using test set, determine performace of the ensemble of M via simple majority voting
+        predictions = []
+        for tree in self.best_M_trees:
+            y_pred = tree.predict(test_set)
+            predictions.append(y_pred)
+        majority_vote = myutils.get_majority_vote(predictions)
+        print(len(test_y), len(majority_vote))
+        matrix = myevals.confusion_matrix(test_y, majority_vote, labels)
+        self.accuracy = myutils.compute_accuracy(matrix)
+        pass
+        
     def predict(self, X_test):
-        """Makes predictions for test samples in X_test.
+        """Makes predictions for test instances in X_test.
 
         Args:
-            X_test(list of list of numeric vals): The list of testing samples
+            X_test(list of list of obj): The list of testing samples
                 The shape of X_test is (n_test_samples, n_features)
-                Note that n_features for simple regression is 1, so each sample is a list 
-                    with one element e.g. [[0], [1], [2]]
 
         Returns:
-            y_predicted(list of numeric vals): The predicted target y values (parallel to X_test)
+            y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
-        y_predicted = []
-        for val in X_test:
-            y_predicted.append((self.slope * val) + self.intercept)
-        return y_predicted # TODO: fix this
+        
+        # Using majority voting, make predictions from the M learners for each instance in the test set
+        predictions = []
+        for tree in self.best_M_trees:
+            y_pred = tree.predict(X_test)
+            predictions.append(y_pred)
+        majority_vote = myutils.get_majority_vote(predictions)
+
+        return predictions
