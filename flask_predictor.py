@@ -2,7 +2,7 @@ import requests # lib to make http requests
 import json # lib to help with parsing JSON objects
 
 # url = "https://interview-flask-app.herokuapp.com/predict?level=Junior&lang=Java&tweets=yes&phd=yes"
-url = "http://cpsc322-final.herokuapp.com/predict?track_duration=30000&artist_popularity=5&genre=latin&available_markets=178&danceability=0.814&acousticness=0.155&tempo=101.934"
+url = "http://cpsc322-final.herokuapp.com/predict?track_duration=long&artist_popularity=5&genre=latin&available_markets=small&danceability=2&acousticness=2&tempo=3"
 
 
 

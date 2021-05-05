@@ -19,13 +19,11 @@ def predict():
     danceability = request.args.get("danceability", "")
     acousticness = request.args.get("acousticness", "")
     tempo = request.args.get("tempo", "")
-
-    print("level:", track_duration, artist_popularity, genre, danceability)
     # task: extract the remaining 3 args
 
     # get a prediction for this unseen instance via the tree
     # return the prediction as a JSON response
-    prediction = predict_interviews_well([track_duration, artist_popularity, genre, available_markets, danceability, acousticness, tempo])
+    prediction = predict_music_well([track_duration, artist_popularity, genre, available_markets, danceability, acousticness, tempo])
     # if anything goes wrong, predict_interviews_well() is going to return None
     if prediction is not None:
         result = {"prediction": prediction}
@@ -49,7 +47,7 @@ def tdidt_predict(header, tree, instance):
     else: # "Leaf"
         return tree[1] # leaf class label
 
-def predict_interviews_well(instance):
+def predict_music_well(instance):
     # 1. we need to a tree (and its header)
     # we need to save a trained model (fit()) to a file
     # so we can load that file into memory in another python
@@ -57,7 +55,7 @@ def predict_interviews_well(instance):
     # import pickle and "load" the header and interview tree 
     # as Python objects we can use for step 2
     print("predicting well")
-    infile = open("/home/CPSC322-Final-Project/tree.p", "rb")
+    infile = open("tree.p", "rb")
     header, tree = pickle.load(infile)
     infile.close()
     print("header:", header)
@@ -71,6 +69,6 @@ def predict_interviews_well(instance):
 
 
 if __name__ == "__main__":
-    # app.run(debug=False)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=False)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port, debug=False)
