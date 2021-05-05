@@ -178,7 +178,7 @@ class MyKNeighborsClassifier:
             for test_set in neighbor_indices:
                 for index in test_set:
                     new_list.append(self.X_train[index])
-                vals, freqs = myutils.get_frequencies(new_list, 2)
+                vals, freqs = myutils.get_frequencies_index(new_list, 2)
                 max_index = freqs.index(max(freqs))
                 y_predicted.append(vals[max_index])
                 new_list = []
@@ -188,7 +188,7 @@ class MyKNeighborsClassifier:
                     new_list.append(self.X_train[i])
                 else:
                     new_list.append(self.X_train[int(val)])
-            vals, freqs = myutils.get_frequencies(new_list, 2)
+            vals, freqs = myutils.get_frequencies_index(new_list, 2)
             max_index = freqs.index(max(freqs))
             y_predicted.append(vals[max_index])
             new_list = []
@@ -350,7 +350,7 @@ class MyRandomClassifier:
         Returns:
             obj: A random obj in y_train
         """
-        values, counts = myutils.get_frequencies(self.y_train, None)
+        values, counts = myutils.get_frequencies_index(self.y_train, None)
         return myutils.weighted_choice(values, counts)
 
 class MyDecisionTreeClassifier:
@@ -699,7 +699,7 @@ class MyRandomForestClassifier:
             predictions.append(y_pred)
         majority_vote = myutils.get_majority_vote(predictions)
         print(len(test_y), len(majority_vote))
-        matrix = myevals.confusion_matrix(test_y, majority_vote, labels)
+        matrix = myevaluation.confusion_matrix(test_y, majority_vote, labels)
         self.accuracy = myutils.compute_accuracy(matrix)
         pass
         

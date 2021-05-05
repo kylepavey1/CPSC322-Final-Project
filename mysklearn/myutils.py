@@ -347,21 +347,20 @@ def get_frequencies_index(table, index):
 #     return col
 
 
-# def compute_slope_intercept(x, y):
-#     """Computes the slope intercept.
-
-#         Args: 
-#             x: an individual value
-#             y: an individual value
-#         Returns:
-#             int: the slope
-#             int: the y intercept
-#     """
-#     mean_x = sum(x) / len(x)
-#     mean_y = sum(y) / len(y)
-#     m = sum([(x[i] - mean_x) * (y[i] - mean_y) for i in range(len(x))]) / sum([(x[i] - mean_x) ** 2 for i in range(len(x))])
-#     b = mean_y - m * mean_x
-#     return m, b
+def compute_slope_intercept(x, y):
+    """Computes the slope intercept.
+         Args: 
+            x: an individual value
+            y: an individual value
+        Returns:
+            int: the slope
+            int: the y intercept
+    """
+    mean_x = sum(x) / len(x)
+    mean_y = sum(y) / len(y)
+    m = sum([(x[i] - mean_x) * (y[i] - mean_y) for i in range(len(x))]) / sum([(x[i] - mean_x) ** 2 for i in range(len(x))])
+    b = mean_y - m * mean_x
+    return m, b
 
 # def compute_euclidean_distance(v1, v2):
 #     """Computes the slope intercept.
@@ -437,39 +436,38 @@ def compute_equal_width_cutoffs(values, num_bins):
 #         del row[index]
 #     return col, X_train
 
-# def group_by_index(table, index):
-#     """Computes the number of occurrences in a column.
+def group_by_index(table, index):
+    """Computes the number of occurrences in a column.
+         Args: 
+            table: the table to be parsed
+            index: the index of the table
+        Returns:
+            list: the names of each group
+            list of list: a new table based on group names
+    """
+    col = get_column(table, index)
+    group_names = sorted(list(set(col))) 
+    group_subtables = [[] for _ in group_names] 
+    for i, row in enumerate(table):
+        group_by_value = col[i]
+        group_index = group_names.index(group_by_value)
+        group_subtables[group_index].append(row.copy())
+    return group_names, group_subtables
 
-#         Args: 
-#             table: the table to be parsed
-#             index: the index of the table
-#         Returns:
-#             list: the names of each group
-#             list of list: a new table based on group names
-#     """
-#     col = get_column(table, index)
-#     group_names = sorted(list(set(col))) 
-#     group_subtables = [[] for _ in group_names] 
-#     for i, row in enumerate(table):
-#         group_by_value = col[i]
-#         group_index = group_names.index(group_by_value)
-#         group_subtables[group_index].append(row.copy())
-#     return group_names, group_subtables
+def weighted_choice(values, weights):
+    """Returns a random value in a list given the number of occurances of each value
 
-# def weighted_choice(values, weights):
-#     """Returns a random value in a list given the number of occurances of each value
-
-#         Args: 
-#             values(list of obj):  a list of values
-#             weight(list of int):  the corresponding number of instances for each value
-#         Returns:
-#             obj: a random value
-#     """
-#     choice_list = []
-#     for i, val in enumerate(values):
-#         choice_list.append([val] * weights[i])
-#     flat_list = [item for sublist in choice_list for item in sublist]
-#     return np.random.choice(flat_list)
+        Args: 
+            values(list of obj):  a list of values
+            weight(list of int):  the corresponding number of instances for each value
+        Returns:
+            obj: a random value
+    """
+    choice_list = []
+    for i, val in enumerate(values):
+        choice_list.append([val] * weights[i])
+    flat_list = [item for sublist in choice_list for item in sublist]
+    return np.random.choice(flat_list)
 
 def compute_accuracy(matrix):
     """Computes the accuracy of a classifier
@@ -844,21 +842,12 @@ def get_majority_vote(table):
     votes = []
 
     for i in range(len(table[0])):
-        vals, counts = get_frequencies(table, i)
+        vals, counts = get_frequencies_index(table, i)
         majority = get_majority(vals, counts)
         votes.append(majority)
     return votes
 
-def get_majority(values, counts):
-    highestCount = 0
-    highestIndex = 0
-    for i, num in enumerate(counts):
-        if num > highestCount:
-            highestCount = num
-            highestIndex = i
-    highestVal = values[highestIndex]
 
-    return highestVal
 
 def random_attribute_subset(attributes, F):
     # shuffle and pick first F
