@@ -56,7 +56,8 @@ def predict_interviews_well(instance):
     # process as a python object (predict())
     # import pickle and "load" the header and interview tree 
     # as Python objects we can use for step 2
-    infile = open("tree.p", "rb")
+    print("predicting well")
+    infile = open("/home/CPSC322-Final-Project/tree.p", "rb")
     header, tree = pickle.load(infile)
     infile.close()
     print("header:", header)
@@ -70,6 +71,6 @@ def predict_interviews_well(instance):
 
 
 if __name__ == "__main__":
-    # app.run(debug=False)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=False)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port, debug=False)
