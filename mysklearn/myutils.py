@@ -383,26 +383,25 @@ def compute_slope_intercept(x, y):
 #         dist = 1
 #     return dist
 
-# def group_by(table, header, group_by_col_name):
-#     """Computes the number of occurrences in a column.
-
-#         Args: 
-#             table: the table to be parsed
-#             header: the header row of the table
-#             group_by_col_name: the column to be grouped by
-#         Returns:
-#             list: the names of each group
-#             list of list: a new table based on group names
-#     """
-#     col_index = header.index(group_by_col_name)
-#     col = get_column(table, col_index)
-#     group_names = sorted(list(set(col))) 
-#     group_subtables = [[] for _ in group_names] 
-#     for i, row in enumerate(table):
-#         group_by_value = col[i]
-#         group_index = group_names.index(group_by_value)
-#         group_subtables[group_index].append(row.copy())
-#     return group_names, group_subtables
+def group_by_table(table, header, group_by_col_name):
+    """Computes the number of occurrences in a column.
+         Args:
+            table: the table to be parsed
+            header: the header row of the table
+            group_by_col_name: the column to be grouped by
+        Returns:
+            list: the names of each group
+            list of list: a new table based on group names
+    """
+    col_index = header.index(group_by_col_name)
+    col = get_column(table, col_index)
+    group_names = sorted(list(set(col)))
+    group_subtables = [[] for _ in group_names]
+    for i, row in enumerate(table):
+        group_by_value = col[i]
+        group_index = group_names.index(group_by_value)
+        group_subtables[group_index].append(row.copy())
+    return group_names, group_subtables
 
 def compute_equal_width_cutoffs(values, num_bins):
     """Computes equal bin widths to divide values.
@@ -420,21 +419,20 @@ def compute_equal_width_cutoffs(values, num_bins):
     cutoffs = [round(cutoff, 2) for cutoff in cutoffs]
     return cutoffs 
 
-# def get_train_labels(X_train, index):
-#     """Computes the number of occurrences in a column.
-
-#         Args: 
-#             table: the table to be parsed
-#             header: the header row of the table
-#             group_by_col_name: the column to be grouped by
-#         Returns:
-#             list: the names of each group
-#             list of list: a new table based on group names
-#     """
-#     col = get_column(X_train, index)
-#     for row in X_train:
-#         del row[index]
-#     return col, X_train
+def get_train_labels(X_train, index):
+    """Computes the number of occurrences in a column.
+         Args: 
+            table: the table to be parsed
+            header: the header row of the table
+            group_by_col_name: the column to be grouped by
+        Returns:
+            list: the names of each group
+            list of list: a new table based on group names
+    """
+    col = get_column(X_train, index)
+    for row in X_train:
+        del row[index]
+    return col, X_train
 
 def group_by_index(table, index):
     """Computes the number of occurrences in a column.
@@ -480,6 +478,25 @@ def compute_accuracy(matrix):
     tp_tn = 0
     p_n = 0
     for i in range(len(matrix)):
+        tp_tn += matrix[i][i + 1]
+    for row in matrix:
+        p_n += sum(row[1:])
+    if tp_tn == 0 or p_n == 0:
+        return 0
+    else:
+        return tp_tn / p_n
+
+def compute_accuracy_2(matrix):
+    """Computes the accuracy of a classifier
+
+        Args: 
+            matrix(list of list of obj): the number of occurances for True and False Positive and True and False negatives 
+        Returns:
+            float: accuracy as a percent
+    """
+    tp_tn = 0
+    p_n = 0
+    for i in range(len(matrix)-1):
         tp_tn += matrix[i][i + 1]
     for row in matrix:
         p_n += sum(row[1:])

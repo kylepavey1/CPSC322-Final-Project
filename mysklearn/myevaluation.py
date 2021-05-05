@@ -153,7 +153,7 @@ def stratified_kfold_cross_validation(X, y, n_splits=4):
     for i, val in enumerate(X):
         val.append(y[i])
         val.append(i)
-    _, group_subtables = myutils.group_by(X, header, "result")
+    _, group_subtables = myutils.group_by_table(X, header, "result")
     
     grouped_indices = []
     for group in group_subtables:
