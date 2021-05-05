@@ -626,7 +626,7 @@ class MyRandomForestClassifier:
         """
         self.best_M_trees = []
         self.accuracy = None
-    def fit(self, X_train, y_train, header):
+    def fit(self, X_train, y_train, header, matrix_labels):
         """Fits a decision tree classifier to X_train and y_train using the TDIDT (top down induction of decision tree) algorithm.
 
         Args:
@@ -646,7 +646,7 @@ class MyRandomForestClassifier:
 
         # take 1/3 for test set, 2/3 for remainder set
         remainder_set, test_set, remainder_y, test_y = myevaluation.train_test_split(X_train, y_train)
-    
+        print("first split: ", len(remainder_set), len(test_set), len(remainder_y), len(test_y))
         # Create N bootstrap samples from remainder set
         N = 4 #number of trees
         forest = []
@@ -657,13 +657,7 @@ class MyRandomForestClassifier:
             
             #split into training set 63% and validation set 36% set
             training_set, validation_set, training_y, validation_y = myevaluation.train_test_split(boot_set, boot_y, 0.36)
-            print("63 SPLIT::::")
-            print(training_set[0], training_y[0], boot_set[0])
-            print(len(training_set), len(training_y), len(boot_set))
             # print("trainingset: ", training_set)
-            #fill out validation set
-            validation_set = []
-            validation_y = []
             
             # build random attribute subsets of size F
             F = 4
@@ -672,8 +666,6 @@ class MyRandomForestClassifier:
             attIndicies = []    
             for att in randomAtts:
                 attIndicies.append(header.index(att))
-            print("randatts: ", randomAtts)
-            print("attIndicies: ", attIndicies)
             # delete unwanted attributes
             F_training_subset = []
             F_validation_subset = []
@@ -698,14 +690,12 @@ class MyRandomForestClassifier:
 
             forest.append(tree)
         
-            labels = ["att1", "att2"]
+
             #run validation set through each tree to get accuracy
             y_pred = tree.predict(F_validation_subset)
-            print(len(validation_y), len(y_pred))
-            matrix = myevaluation.confusion_matrix(validation_y, y_pred, labels)
-            accuracy = myutils.compute_accuracy(matrix)
+            matrix = myevaluation.confusion_matrix(validation_y, y_pred, matrix_labels)
+            accuracy = myutils.compute_accuracy_2(matrix)
             tree_accuracy.append(accuracy)
-        
         #choose best M trees 
         M = 3
 
@@ -720,9 +710,8 @@ class MyRandomForestClassifier:
             y_pred = tree.predict(test_set)
             predictions.append(y_pred)
         majority_vote = myutils.get_majority_vote(predictions)
-        print(len(test_y), len(majority_vote))
-        matrix = myevaluation.confusion_matrix(test_y, majority_vote, labels)
-        self.accuracy = myutils.compute_accuracy(matrix)
+        matrix = myevaluation.confusion_matrix(test_y, majority_vote, matrix_labels)
+        self.accuracy = myutils.compute_accuracy_2(matrix)
         pass
         
     def predict(self, X_test):

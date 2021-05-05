@@ -486,6 +486,25 @@ def compute_accuracy(matrix):
     else:
         return tp_tn / p_n
 
+def compute_accuracy_2(matrix):
+    """Computes the accuracy of a classifier
+
+        Args: 
+            matrix(list of list of obj): the number of occurances for True and False Positive and True and False negatives 
+        Returns:
+            float: accuracy as a percent
+    """
+    tp_tn = 0
+    p_n = 0
+    for i in range(len(matrix)-1):
+        tp_tn += matrix[i][i + 1]
+    for row in matrix:
+        p_n += sum(row[1:])
+    if tp_tn == 0 or p_n == 0:
+        return 0
+    else:
+        return tp_tn / p_n
+
 def compute_error_rate(matrix):
     """Computes the error rate of a classifier
 
