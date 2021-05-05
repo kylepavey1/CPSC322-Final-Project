@@ -2,7 +2,7 @@
 Programmers: Kyle Pavey and Adam Lee
 Class: 322-01, Spring 2021
 Final Project
-4/21/21
+5/5/21
 """
 import mysklearn.myutils as myutils
 import random
@@ -33,20 +33,12 @@ def train_test_split(X, y, test_size=0.33, random_state=None, shuffle=True):
     """
     if random_state is not None:
         random.seed(random_state)
-        # TODO: seed your random number generator
-       # you can use the math module or use numpy for your generator
-       # choose one and consistently use that generator throughout your code
         pass
     
     if shuffle:
         z = list(zip(X, y))
         random.shuffle(z)
         X, y = zip(*z)
-        # TODO: shuffle the rows in X and y before splitting
-        # be sure to maintain the parallel order of X and y!!
-        # note: the unit test for train_test_split() does not test
-        # your use of random_state or shuffle, but you should still 
-        # implement this and check your work yourself
         pass
     n = len(X)
     if isinstance(test_size, float):
@@ -226,34 +218,3 @@ def confusion_matrix(y_true, y_pred, labels):
                     matrix[row_index][col_index] += 1
 
     return matrix
-
-# def confusion_matrix(y_true, y_pred, labels):
-#     """Compute confusion matrix to evaluate the accuracy of a classification.
-#     Args:
-#         y_true(list of obj): The ground_truth target y values
-#             The shape of y is n_samples
-#         y_pred(list of obj): The predicted target y values (parallel to y_true)
-#             The shape of y is n_samples
-#         labels(list of str): The list of all possible target y labels used to index the matrix
-#     Returns:
-#         matrix(list of list of int): Confusion matrix whose i-th row and j-th column entry 
-#             indicates the number of samples with true label being i-th class 
-#             and predicted label being j-th class
-#     Notes:
-#         Loosely based on sklearn's confusion_matrix(): https://scikit-learn.org/stable/modules/generated/sklearn.metrics.confusion_matrix.html
-#     """
-#     matrix = []
-#     #start in actual
-#     for actual in labels:
-#         row = []
-#         #compare with predicted
-#         for predicted in labels:
-#             #loop through true and pred
-#             count = 0
-#             for i in range(0, (len(y_true))):
-#                 if (y_true[i] == actual) & (y_pred[i] == predicted):
-#                     count = count + 1
-#             row.append(count)
-#         matrix.append(row)
-                
-#     return matrix

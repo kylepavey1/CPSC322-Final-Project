@@ -2,7 +2,7 @@
 Programmers: Kyle Pavey and Adam Lee
 Class: 322-01, Spring 2021
 Final Project
-4/21/21
+5/5/21
 """
 import os
 import urllib.request 
@@ -17,6 +17,7 @@ import mysklearn.mypytable
 importlib.reload(mysklearn.mypytable)
 from mysklearn.mypytable import MyPyTable 
 
+# Removed for security
 client_id = ''
 client_secret = ''
 
@@ -38,14 +39,15 @@ headers = {
 
 BASE_URL = 'https://api.spotify.com/v1/'
 
-track_quantity = 1
+track_quantity = 2000
 track_table = []
 characters = 'abcdefghijklmnopqrstuvwxyz'
 
+# Returns information about tracks using 3 requests
 for i in range(track_quantity):
     random_search_key, offset = myutils.getRandomSearch(characters)
-    # print(random_search_key, offset)
-    search_json_response = requests.get(BASE_URL + "search{}{}{}{}".format("?q="+str(random_search_key), "&offset="+str(offset), "&limit=1", "&type=track"), headers=headers)
+    search_json_response = requests.get(BASE_URL + "search{}{}{}{}".format("?q="+str(random_search_key), 
+                                    "&offset="+str(offset), "&limit=1", "&type=track"), headers=headers)
     search_json_object = search_json_response.json()
 
     # Information about the track
@@ -67,13 +69,6 @@ for i in range(track_quantity):
         if genres:
             genres = genres[0]
 
-    # Information about the album
-    # album_obj = requests.get(BASE_URL + "albums/{}/".format(album_id), headers=headers)
-    # album_obj = album_obj.json()
-    # # print(album_obj)
-    # # print("")
-    # album_genres = album_obj["genres"]
-
     # Information about the audio features
     audio_features = requests.get(BASE_URL + 'audio-features/' + track_id, headers=headers)
     audio_features_json = audio_features.json()
@@ -82,7 +77,6 @@ for i in range(track_quantity):
     tempo = audio_features_json["tempo"]
 
     track_table.append([track_id, track_name, track_popularity, track_duration, artist_name, artist_popularity, genres, available_markets, danceability, acousticness, tempo])
-
 
 column_names = ["track_id", "track_name", "track_popularity", "track_duration", "artist_name", "artist_popularity", "genres", "available_markets", "danceability", "acousticness", "tempo"]
 track_pytable = MyPyTable(column_names, track_table)

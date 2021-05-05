@@ -1,13 +1,11 @@
-import pickle # standard python library
+"""
+Programmers: Kyle Pavey and Adam Lee
+Class: 322-01, Spring 2021
+Final Project
+5/5/21
+"""
 
-# "pickle" an object (AKA object serialization)
-# save a Python object to a binary file
-
-# "unpickle" an object (AKA object de-serialization)
-# load a Python object from a binary file (back into memory)
-
-# for your project, pickle an instance MyRandomForestClassifier, MyDecisionTreeClassifier
-# for demo use header and interview_tree below
+import pickle
 
 import os
 header = ["track_duration", "artist_popularity", "genres", "available_markets", "danceability", "acousticness", "tempo"]
@@ -72,7 +70,6 @@ music_tree = \
         ['Leaf', 'Low', 0, 156]]]
 
 packaged_object = [header, music_tree]
-# pickle packaged_object
 outfile = open("tree.p", "wb")
 pickle.dump(packaged_object, outfile)
 outfile.close()

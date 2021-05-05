@@ -1,3 +1,10 @@
+"""
+Programmers: Kyle Pavey and Adam Lee
+Class: 322-01, Spring 2021
+Final Project
+5/5/21
+"""
+
 import requests # lib to make http requests
 import json # lib to help with parsing JSON objects
 
