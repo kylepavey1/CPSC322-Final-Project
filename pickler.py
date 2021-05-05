@@ -12,33 +12,7 @@ import pickle # standard python library
 import os
 dir_path = os.path.dirname(os.path.realpath(__file__))
 print(dir_path)
-header = ["level", "lang", "tweets", "phd"]
-interview_tree = \
-["Attribute", "level", 
-    ["Value", "Senior", 
-        ["Attribute", "tweets", 
-            ["Value", "yes", 
-                ["Leaf", "True", 2, 5]
-            ],
-            ["Value", "no", 
-                ["Leaf", "False", 3, 5]
-            ]
-        ]
-    ],
-    ["Value", "Mid", 
-        ["Leaf", "True", 4, 14]
-    ],
-    ["Value", "Junior", 
-        ["Attribute", "phd", 
-            ["Value", "yes", 
-                ["Leaf", "False", 2, 5]
-            ],
-            ["Value", "no", 
-                ["Leaf", "True", 3, 5]
-            ]
-        ]
-    ]
-]
+header = ["track_duration", "artist_popularity", "genres", "available_markets", "danceability", "acousticness", "tempo"]
 
 music_tree = \
 ['Attribute', 'att3', 
@@ -99,7 +73,7 @@ music_tree = \
     ['Value', 'medium', 
         ['Leaf', 'Low', 0, 156]]]
 
-packaged_object = [header, interview_tree]
+packaged_object = [header, music_tree]
 # pickle packaged_object
 outfile = open("tree.p", "wb")
 pickle.dump(packaged_object, outfile)
