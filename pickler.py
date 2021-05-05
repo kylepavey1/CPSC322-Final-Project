@@ -10,8 +10,6 @@ import pickle # standard python library
 # for demo use header and interview_tree below
 
 import os
-dir_path = os.path.dirname(os.path.realpath(__file__))
-print(dir_path)
 header = ["track_duration", "artist_popularity", "genres", "available_markets", "danceability", "acousticness", "tempo"]
 
 music_tree = \

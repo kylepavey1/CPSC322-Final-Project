@@ -729,6 +729,7 @@ class MyRandomForestClassifier:
         predictions = []
         for tree in self.best_M_trees:
             y_pred = tree.predict(X_test)
+            print(y_pred)
             predictions.append(y_pred)
         majority_vote = myutils.get_majority_vote(predictions)
 

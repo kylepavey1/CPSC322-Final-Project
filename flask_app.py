@@ -55,7 +55,7 @@ def predict_music_well(instance):
     # import pickle and "load" the header and interview tree 
     # as Python objects we can use for step 2
     print("predicting well")
-    infile = open("tree.p", "rb")
+    infile = open("/CPSC322-Final-Project/tree.p", "rb")
     header, tree = pickle.load(infile)
     infile.close()
     print("header:", header)
@@ -69,6 +69,6 @@ def predict_music_well(instance):
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
-    # port = int(os.environ.get("PORT", 5000))
-    # app.run(host='0.0.0.0', port=port, debug=False)
+    # app.run(debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
