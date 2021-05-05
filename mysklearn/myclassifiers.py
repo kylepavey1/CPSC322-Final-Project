@@ -626,7 +626,7 @@ class MyRandomForestClassifier:
         """
         self.best_M_trees = []
         self.accuracy = None
-    def fit(self, X_train, y_train):
+    def fit(self, X_train, y_train, header):
         """Fits a decision tree classifier to X_train and y_train using the TDIDT (top down induction of decision tree) algorithm.
 
         Args:
@@ -650,35 +650,57 @@ class MyRandomForestClassifier:
         # Create N bootstrap samples from remainder set
         N = 4 #number of trees
         forest = []
+        tree_accuracy = []
         for i in range(N):
-            training_set, training_y = myutils.compute_bootstrapped_sample(remainder_set, remainder_y)
-            print(training_set[0], training_y[0], remainder_set[0])
+            #get bootstrapped example
+            boot_set, boot_y = myutils.compute_bootstrapped_sample(remainder_set, remainder_y)
+            
+            #split into training set 63% and validation set 36% set
+            training_set, validation_set, training_y, validation_y = myevaluation.train_test_split(boot_set, boot_y, 0.36)
+            print("63 SPLIT::::")
+            print(training_set[0], training_y[0], boot_set[0])
+            print(len(training_set), len(training_y), len(boot_set))
             # print("trainingset: ", training_set)
             #fill out validation set
             validation_set = []
             validation_y = []
             
-            for instance in remainder_set:
-                if instance not in training_set:
-                    validation_set.append(instance)
-            for y in remainder_y:
-                if y not in training_y:
-                    validation_y.append(y)
+            # build random attribute subsets of size F
+            F = 4
+            randomAtts = myutils.random_attribute_subset(header, F)
+    
+            attIndicies = []    
+            for att in randomAtts:
+                attIndicies.append(header.index(att))
+            print("randatts: ", randomAtts)
+            print("attIndicies: ", attIndicies)
+            # delete unwanted attributes
+            F_training_subset = []
+            F_validation_subset = []
+            for instance in training_set:
+                row = []
+                for i in range(len(instance)):
+                    if i in attIndicies:
+                        row.append(instance[i])
+                F_training_subset.append(row)
+            for instance in validation_set:
+                row = []
+                for i in range(len(instance)):
+                    if i in attIndicies:
+                        row.append(instance[i])
+                F_validation_subset.append(row)
             
             # print("validationset: ", validation_set)
 
             tree = MyDecisionTreeClassifier()
             #print("tree: ", tree)
-            tree.fit(training_set, training_y)
+            tree.fit(F_training_subset, training_y)
 
             forest.append(tree)
         
-        
-        labels = ["att1", "att2"]
-        #run validation set through each tree to get accuracy
-        tree_accuracy = []
-        for tree in forest:
-            y_pred = tree.predict(validation_set)
+            labels = ["att1", "att2"]
+            #run validation set through each tree to get accuracy
+            y_pred = tree.predict(F_validation_subset)
             print(len(validation_y), len(y_pred))
             matrix = myevaluation.confusion_matrix(validation_y, y_pred, labels)
             accuracy = myutils.compute_accuracy(matrix)
